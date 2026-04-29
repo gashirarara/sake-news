@@ -1,29 +1,30 @@
-import feedparser
 import requests
 from flask import Flask, jsonify, render_template
 
 app = Flask(__name__)
 
-RSS_URL = "https://news.yahoo.co.jp/rss/search?p=日本酒&ei=UTF-8"
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    "Accept-Language": "ja,en;q=0.9",
-    "Accept": "application/rss+xml, application/xml, text/xml, */*",
-}
+# rss2json.comはRSSをJSONに変換するプロキシサービス（無料・APIキー不要）
+RSS2JSON_URL = "https://api.rss2json.com/v1/api.json"
+GOOGLE_NEWS_RSS = "https://news.google.com/rss/search?q=日本酒&hl=ja&gl=JP&ceid=JP:ja"
 
 
 def fetch_news():
-    response = requests.get(RSS_URL, headers=HEADERS, timeout=10)
+    response = requests.get(
+        RSS2JSON_URL,
+        params={"rss_url": GOOGLE_NEWS_RSS},
+        timeout=15,
+    )
     response.raise_for_status()
-    feed = feedparser.parse(response.content)
+    data = response.json()
+
     articles = []
-    for entry in feed.entries[:20]:
+    for item in data.get("items", [])[:20]:
         articles.append({
-            "title": entry.get("title", ""),
-            "link": entry.get("link", ""),
-            "published": entry.get("published", ""),
-            "source": entry.get("source", {}).get("title", ""),
-            "summary": entry.get("summary", ""),
+            "title": item.get("title", ""),
+            "link": item.get("link", ""),
+            "published": item.get("pubDate", ""),
+            "source": item.get("author", ""),
+            "summary": item.get("description", ""),
         })
     return articles
 
