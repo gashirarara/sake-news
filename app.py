@@ -1,18 +1,21 @@
 import feedparser
-import urllib.request
+import requests
 from flask import Flask, jsonify, render_template
 
 app = Flask(__name__)
 
-RSS_URL = "https://news.google.com/rss/search?q=日本酒&hl=ja&gl=JP&ceid=JP:ja"
-HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; SakeNewsBot/1.0)"}
+RSS_URL = "https://news.yahoo.co.jp/rss/search?p=日本酒&ei=UTF-8"
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Accept-Language": "ja,en;q=0.9",
+    "Accept": "application/rss+xml, application/xml, text/xml, */*",
+}
 
 
 def fetch_news():
-    req = urllib.request.Request(RSS_URL, headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=10) as response:
-        content = response.read()
-    feed = feedparser.parse(content)
+    response = requests.get(RSS_URL, headers=HEADERS, timeout=10)
+    response.raise_for_status()
+    feed = feedparser.parse(response.content)
     articles = []
     for entry in feed.entries[:20]:
         articles.append({
