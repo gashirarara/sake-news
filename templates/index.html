@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日本酒ニュース</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">🍶</div>
+      <h1>日本酒ニュース</h1>
+      <p class="subtitle">sake &amp; news</p>
+    </div>
+  </header>
+
+  <main>
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p>ニュースを取得中...</p>
+    </div>
+    <div id="error" class="error hidden"></div>
+    <div id="news-grid" class="news-grid hidden"></div>
+  </main>
+
+  <footer>
+    <p>Google News より取得 &copy; 日本酒ニュース</p>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+</body>
+</html>
